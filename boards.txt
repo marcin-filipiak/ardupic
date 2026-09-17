@@ -1,0 +1,14 @@
+# Board definitions for the PIC18F25K80 (SDCC).
+
+pic18f25k80.name=PIC18F25K80 (28-pin)
+
+pic18f25k80.upload.maximum_size=32768
+pic18f25k80.upload.maximum_data_size=2048
+pic18f25k80.upload.tool=picprog-serial
+pic18f25k80.upload.protocol=arduino
+
+pic18f25k80.build.f_cpu=16000000L
+pic18f25k80.build.mcu=PIC18F25K80
+pic18f25k80.build.board=PIC18F25K80
+pic18f25k80.build.core=pic18f25k80
+pic18f25k80.build.variant=pic18f25k80

@@ -1,0 +1,16 @@
+# Programmers for the PIC18F25K80 core.
+
+picprog-serial.name=PICprog via serial/FTDI (6-pin ICSP)
+picprog-serial.protocol=picprog
+picprog-serial.program.tool=picprog-serial
+picprog-serial.program.pattern="{compiler.path}picprog-upload" -d {serial.port} -f "{build.path}/{build.project_name}.hex"
+
+stk500v1.name=STK500 compatible (AVR ISP on ICSP)
+stk500v1.protocol=stk500
+stk500v1.program.tool=avrdude
+stk500v1.program.pattern=echo "AVR ISP not supported on PIC18"
+
+usbasp.name=USBasp clone
+usbasp.protocol=usbasp
+usbasp.program.tool=avrdude
+usbasp.program.pattern=echo "USBasp not supported on PIC18"

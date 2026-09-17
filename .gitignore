@@ -1,0 +1,20 @@
+# artefakty lokalne / testowe
+_build/
+_ardhome/
+_arddata/
+frame.dummy
+
+# narzędzia testowe
+tools/arduino-cli
+
+# toolchain binarny (generowany, duży) — nie trafia do repo źródłowego
+toolchain/sdcc/
+toolchain/gputils/
+toolchain/header/
+
+# artefakty assemblera/łącznika
+*.o
+*.lst
+*.cod
+blinkblink.*
+cfgfull.*

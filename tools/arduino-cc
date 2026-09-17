@@ -1,0 +1,175 @@
+#!/bin/bash
+# arduino-cc - SDCC/gputils shim used by platform.txt of the PIC18F25K80 core.
+#
+# Modes:
+#   compile <flags> -o out.o src.c|src.cpp   : C/C -> sdcc -S -> gpasm -c
+#   gas     <flags> -o out.o src.S|src.s     :       gpasm -c
+#   ar      <archive> <object.o>             : incremental gplib archive
+#   link    -o out.hex <objects & archives>  : gplink + sdcc crt0/libs
+#   preproc <flags> src                      : no-op (exit 0)
+set -u
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+PLATFORM_DIR="$(cd "$HERE/.." && pwd)"
+
+SDCC_BIN="${SDCC_BIN:-$PLATFORM_DIR/toolchain/sdcc/bin}"
+GPUTILS_BIN="${GPUTILS_BIN:-$PLATFORM_DIR/toolchain/gputils/bin}"
+SDCC_LIB="${SDCC_LIB:-$PLATFORM_DIR/toolchain/sdcc/share/sdcc/lib/pic16}"
+TOOLCHAIN_LIB="${DEV_LIB:-$PLATFORM_DIR/toolchain/lib}"
+LKR_FILE="${LKR_FILE:-$PLATFORM_DIR/toolchain/lkr/18f25k80_g.lkr}"
+GPUTILS_INC_DIR="${GPUTILS_INC_DIR:-$PLATFORM_DIR/toolchain/header}"
+
+export GPUTILS_LKR_PATH="$(dirname "$LKR_FILE")"
+export GPUTILS_LIB_PATH="${TOOLCHAIN_LIB}:${SDCC_LIB}"
+
+mode="${1:-compile}"
+shift
+
+compile_obj()
+{
+    local src="" out="" a flags=() depfile=""
+    while [ $# -gt 0 ]; do
+        a="$1"
+        case "$a" in
+            -o) out="${2:-}"; shift 2; continue ;;
+            -MMD) flags+=("$a") ;;
+            -MF) depfile="${2:-}"; shift 2; continue ;;
+            -*) flags+=("$a") ;;
+            *)  if [ -z "$src" ] && [ -f "$a" ]; then src="$a"; else flags+=("$a"); fi ;;
+        esac
+        shift
+    done
+    [ -n "$src" ] || { echo "arduino-cc: no source file" >&2; exit 1; }
+    [ -n "$out" ] || { echo "arduino-cc: no -o output" >&2; exit 1; }
+
+    # arduino-cli prototype generation / preproc passes ask for a .cpp file:
+    # just copy the (already preprocessed) C source through.
+    case "$out" in
+        *.o) ;;
+        *) mkdir -p "$(dirname "$out")"; cp "$src" "$out"; [ -n "$depfile" ] && { echo -n "" > "$depfile"; }; exit 0 ;;
+    esac
+    [ -n "$depfile" ] && { echo -n "" > "$depfile"; }
+
+    local tmp=""
+    case "$src" in
+        *.c) : ;;
+        *) outdir="$(dirname "$out")"; tmp="$outdir/.$(basename "$src").c"; cp "$src" "$tmp"; src="$tmp" ;;
+    esac
+
+    local asm="${out%.o}.asm"
+    "$SDCC_BIN/sdcc" -S -mpic16 -p18f25k80 -I"$PLATFORM_DIR/toolchain" "${flags[@]}" -o "$asm" "$src" || { rm -f "$tmp"; exit 1; }
+    if [ -n "$tmp" ]; then rm -f "$tmp"; fi
+    "$GPUTILS_BIN/gpasm" -c -p18f25k80 -o "$out" "$asm" || exit 1
+}
+
+case "$mode" in
+  compile)
+    compile_obj "$@"
+    ;;
+
+  gas)
+    src=""; out=""
+    while [ $# -gt 0 ]; do
+        a="$1"
+        case "$a" in
+            -o) out="${2:-}"; shift 2; continue ;;
+        esac
+        [ -f "$a" ] && src="$a"
+        shift
+    done
+    [ -n "$out" ] && [ -n "$src" ] || { echo "arduino-cc gas: bad args" >&2; exit 1; }
+    "$GPUTILS_BIN/gpasm" -c -p18f25k80 -o "$out" "$src" || exit 1
+    ;;
+
+  ar)
+    arch="${1:-}"; obj="${2:-}"
+    [ -n "$arch" ] && [ -n "$obj" ] || { echo "arduino-cc ar: bad args" >&2; exit 1; }
+    if [ -f "$arch" ]; then
+        "$GPUTILS_BIN/gplib" -q -r "$arch" "$obj" || exit 1
+    else
+        "$GPUTILS_BIN/gplib" -q -c "$arch" "$obj" || exit 1
+    fi
+    ;;
+
+  link)
+    out=""; objs=()
+    while [ $# -gt 0 ]; do
+        a="$1"
+        if [ "$a" = "-o" ]; then out="${2:-}"; shift 2; continue; fi
+        case "$a" in
+            *.o|*.a|*.lib) objs+=("$a") ;;
+        esac
+        shift
+    done
+    [ -n "$out" ] || { echo "arduino-cc link: no -o" >&2; exit 1; }
+
+    # make sure the SFR device library exists before linking
+    if [ ! -f "$TOOLCHAIN_LIB/libdev18f25k80.lib" ]; then
+        DEV_LIB="$TOOLCHAIN_LIB" INC="$GPUTILS_INC_DIR/p18f25k80.inc" \
+            "$PLATFORM_DIR/toolchain/gen_sfr_lib.sh" || exit 1
+    fi
+
+    # sdcc 4.5.0 quirk: old ___eeprom_gptr* names -> ___eeprom8_gptr*
+    SHIM_SRC="$PLATFORM_DIR/toolchain/lib/gptr_shim.S"
+    SHIM_O="$TOOLCHAIN_LIB/gptr_shim.o"
+    if [ ! -f "$SHIM_O" ]; then
+        "$GPUTILS_BIN/gpasm" -p18f25k80 -c -I "$GPUTILS_INC_DIR" \
+            -o "$SHIM_O" "$SHIM_SRC" || exit 1
+    fi
+
+    export GPUTILS_LKR_PATH GPUTILS_LIB_PATH
+    "$GPUTILS_BIN/gplink" -w -r -o "$out" \
+        -I"$SDCC_LIB" -I"$TOOLCHAIN_LIB" \
+        "${objs[@]}" \
+        crt0iz.o gptr_shim.o libio18f25k80.lib libdev18f25k80.lib libsdcc.lib libc18f.lib || exit 1
+    ;;
+
+  preproc)
+    # arduino-cli expects the preprocessed sketch on stdout; the sketch is
+    # already plain C, so just pass it through.
+    for a in "$@"; do
+        if [ -f "$a" ]; then
+            cat "$a"
+            exit 0
+        fi
+    done
+    exit 0
+    ;;
+
+  size)
+    hex="${1:-}"
+    [ -f "$hex" ] || { echo "arduino-cc size: brak pliku HEX" >&2; exit 1; }
+    python3 - "$hex" <<'PYEOF'
+import re, sys
+hex_file = sys.argv[1]
+base = 0
+end = 0
+for raw in open(hex_file):
+    line = raw.rstrip("\r\n")
+    if not line.startswith(":"):
+        continue
+    try:
+        bytes_ = bytes.fromhex(line[1:-2])
+    except ValueError:
+        continue
+    rec = bytes_[0]; addr = (bytes_[1] << 8) | bytes_[2]; typ = bytes_[3]
+    if typ == 4:                 # extended linear address
+        base = (bytes_[4] << 8 | bytes_[5]) << 16
+    elif typ == 0:               # data
+        a = base + addr
+        if a < 0x100000:         # wyklucz region konfiguracyjny (>= 0x300000)
+            e = a + len(bytes_) - 5
+            if e > end:
+                end = e
+print("SKETCH: %d bytes" % end)
+PYEOF
+    exit 0
+    ;;
+
+  *)
+    echo "arduino-cc: unknown mode '$mode'" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

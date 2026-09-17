@@ -1,0 +1,18 @@
+#!/bin/bash
+# picprog-upload - placeholder for the PIC programmer driver.
+# picprog (Debian 12) needs a patched device table to support the 25K80.
+# This driver will be replaced once picprog support lands; until then it
+# explains the situation instead of failing silently.
+set -u
+port=""; fw=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -d) port="${2:-}"; shift 2 ;;
+        -f) fw="${2:-}";    shift 2 ;;
+        *) shift ;;
+    esac
+done
+echo "picprog-upload: picprog programmer driver not yet available."
+echo "  port=($port)  firmware=$fw"
+echo "  Install Debian 'picprog' and patch the device table for PIC18F25K80."
+exit 1

@@ -1,0 +1,34 @@
+name=PIC18F25K80 (SDCC)
+version=0.1.0
+
+## Compiler (SDCC wrapper)
+compiler.path={runtime.platform.path}/tools/
+compiler.c.flags=--std-c99 --no-warn-non-free
+compiler.warning_flags=-Wall
+compiler.c.extra_flags=
+compiler.ldflags=
+compiler.objcopy.eep.flags=
+
+## Recipe: compile object
+recipe.c.o.pattern="{compiler.path}arduino-cc" compile {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
+recipe.cpp.o.pattern="{compiler.path}arduino-cc" compile {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
+recipe.S.o.pattern="{compiler.path}arduino-cc" gas -o "{object_file}" "{source_file}"
+
+## Recipe: archive core objects
+recipe.ar.pattern="{compiler.path}arduino-cc" ar "{archive_file_path}" "{object_file}"
+
+## Recipe: combine objects into the firmware image
+recipe.c.combine.pattern="{compiler.path}arduino-cc" link -o "{build.path}/{build.project_name}.hex" {object_files} "{archive_file_path}"
+
+## Recipe: report program size (Intel HEX -> bytes below CONFIG region)
+recipe.size.pattern="{compiler.path}arduino-cc" size "{build.path}/{build.project_name}.hex"
+recipe.size.regex=^SKETCH: ([0-9]+) bytes$
+
+## Recipe: preprocessor macro pass (no-op for SDCC)
+recipe.c.preproc.macros="{compiler.path}arduino-cc" preproc "{source_file}"
+
+## Upload defaults
+tools.picprog-serial.path={runtime.platform.path}/tools/
+tools.picprog-serial.upload.params.verbose=-v
+tools.picprog-serial.upload.params.quiet=
+tools.picprog-serial.upload.pattern="{compiler.path}picprog-upload" -d {serial.port} -f "{build.path}/{build.project_name}.hex"
