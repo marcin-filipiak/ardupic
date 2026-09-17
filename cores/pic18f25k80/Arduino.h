@@ -64,7 +64,7 @@
 #define NUM_DIGITAL_PINS 23   /* PA0..7, PB0..7, PC0..6 */
 #define NUM_ANALOG_INPUTS 8
 
-/* ---- pin numberi ng: pin = port*8 + bit, port 0=A,1=B,2=C ---- */
+/* ---- pin numbering: pin = port*8 + bit, port 0=A,1=B,2=C ---- */
 
 void init(void);
 

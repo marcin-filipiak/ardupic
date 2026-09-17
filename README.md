@@ -88,6 +88,32 @@ The default programmer is **JDM** (simple serial/FTDI); set `PICPROG_HW=k8048` t
 a K8048 instead. PIC18F2550/4550 and PIC16F877A are supported natively by PICprog;
 PIC18F25K80 uses an added device-table entry that is still **untested on hardware**.
 
+## Examples
+
+The `examples/` directory (supported boards in brackets):
+
+| Example | Boards | Demonstrates |
+|---|---|---|
+| `Blink` | all | `pinMode` / `digitalWrite` / `delay` |
+| `BlinkWithoutDelay` | all | `millis()`-based timing |
+| `Fade` | all | `analogWrite` (PWM on pin 18) |
+| `DigitalReadSerial` | all | `digitalRead` + `uart1_*` |
+| `SerialAin` | all | `analogRead` + UART1 output |
+| `Interrupts` | all | `attachInterrupt` (INT0 = pin 8) |
+| `UsbSerial` | 2550/4550 | USB CDC echo |
+| `UsbSerialSend` | 2550/4550 | USB CDC transmit (periodic data) |
+| `UsbSerialReceive` | 2550/4550 | USB CDC receive (command interpreter) |
+| `CanSend` | 25K80 | CAN transmit (standard + extended frames) |
+| `CanReceive` | 25K80 | CAN receive (ISR-fed queue) |
+
+```bash
+arduino-cli compile -b marcinfilipiak:ardupic:pic18f25k80 examples/CanSend
+arduino-cli compile -b marcinfilipiak:ardupic:pic18f2550 examples/UsbSerialSend
+```
+
+USB CDC needs the on-chip USB (RC4/RC5); CAN needs an external transceiver
+(MCP2551, SN65HVD230, …) and bus termination.
+
 ## Pin mapping
 
 Numbering: **pin = port×8 + bit** (port 0 = PORTA, 1 = PORTB, 2 = PORTC, ...).
@@ -251,6 +277,7 @@ ardupic/
 │   ├── header/           # *.inc for gpasm
 │   ├── lib/              # libdev*.lib, gptr_shim.S
 │   └── picprog/          # bundled PICprog 1.9.1 (src/ + build.sh + bin/picprog)
+├── examples/             # Blink, Fade, SerialAin, UsbSerial*, Can*
 └── tools/
     ├── arduino-cc        # wrapper: implements the platform.txt recipes
     ├── arduino-cli       # (optional, for testing)
