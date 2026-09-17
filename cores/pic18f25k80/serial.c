@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-/* EUSART1: TX = RC6 (Arduino pin 22), RX = RC7 (Arduino pin 21).
+/* EUSART1: TX = RC6 (Arduino pin 22), RX = RC7 (Arduino pin 23).
  * Non-standard bauds fall back to the nearest divisor.
  * BRGH=0, BRG16=1 -> SPBRG = Fosc/(16*baud) - 1.
  * Supported reliably: 4800, 9600, 19200, 38400, 57600 @ 16 MHz.

@@ -59,7 +59,7 @@
 #define LED_BUILTIN 13
 
 #define PIN_SERIAL_TX 22      /* RC6 */
-#define PIN_SERIAL_RX 21      /* RC7 */
+#define PIN_SERIAL_RX 23      /* RC7 */
 
 #define NUM_DIGITAL_PINS 23   /* PA0..7, PB0..7, PC0..6 */
 #define NUM_ANALOG_INPUTS 8
@@ -95,6 +95,8 @@ void uart1_print_ulong(unsigned long v);
 void uart1_print_int(long v);
 int uart1_read(void);
 unsigned char uart1_available(void);
+
+#include "can.h"
 
 #include "pins_arduino.h"
 

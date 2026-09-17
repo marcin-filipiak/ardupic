@@ -41,7 +41,16 @@ case "$DEVICE" in
     PIC16F*) ARCH="pic14"; SPROC="$CASE_ARG"; GEPROC="${CASE_ARG#pic}" ;;
     *)       ARCH="pic16"; SPROC="$CASE_ARG"; GEPROC="${CASE_ARG#pic}" ;;
 esac
-LKR_FILE="$LKR_DIR/${GEPROC}_g.lkr"
+# LKR_OVERRIDE: optional per-board linker script (e.g. *_usb_g.lkr that
+# reserves USB RAM for the SIE BDT/buffers). Plain name -> resolved in LKR_DIR.
+if [ -n "${LKR_OVERRIDE:-}" ]; then
+    case "$LKR_OVERRIDE" in
+        /*) LKR_FILE="$LKR_OVERRIDE" ;;
+        *)  LKR_FILE="$LKR_DIR/$LKR_OVERRIDE" ;;
+    esac
+else
+    LKR_FILE="$LKR_DIR/${GEPROC}_g.lkr"
+fi
 
 export GPUTILS_LKR_PATH="$LKR_DIR"
 
@@ -125,16 +134,26 @@ case "$mode" in
     ;;
 
   link)
-    out=""; objs=()
+    out=""; objs=(); lkr_arg=""
     while [ $# -gt 0 ]; do
         a="$1"
         if [ "$a" = "-o" ]; then out="${2:-}"; shift 2; continue; fi
         case "$a" in
+            *.lkr) lkr_arg="$a" ;;
             *.o|*.a|*.lib) objs+=("$a") ;;
         esac
         shift
     done
     [ -n "$out" ] || { echo "arduino-cc link: no -o" >&2; exit 1; }
+
+    # per-board linker script passed as trailing arg (arduino-cli cannot set
+    # environment variables via recipe prefixes); plain name -> resolved in LKR_DIR.
+    if [ -n "$lkr_arg" ]; then
+        case "$lkr_arg" in
+            /*) LKR_FILE="$lkr_arg" ;;
+            *)  LKR_FILE="$LKR_DIR/$lkr_arg" ;;
+        esac
+    fi
 
     if [ "$ARCH" = "pic14" ]; then
         export GPUTILS_LKR_PATH GPUTILS_LIB_PATH

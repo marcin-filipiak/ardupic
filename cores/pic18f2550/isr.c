@@ -4,8 +4,9 @@
  * dispatches Timer0 tick and the three external interrupt callbacks.
  */
 
-#define TMR0_PRELOAD_H 0xF8
-#define TMR0_PRELOAD_L 0x30
+#define TMR0_PRELOAD    ((unsigned int)(0x10000U - (unsigned int)(F_CPU / 4000UL)))
+#define TMR0_PRELOAD_H  ((unsigned char)((TMR0_PRELOAD) >> 8))
+#define TMR0_PRELOAD_L  ((unsigned char)((TMR0_PRELOAD) & 0xFF))
 
 volatile unsigned long _millis;
 
@@ -60,13 +61,13 @@ unsigned long micros(void)
     INTCON |= (1U << INTCON_GIE);
 
     t = l | ((unsigned int)h << 8);
-    if (t < 0xF830U) {
+    if (t < TMR0_PRELOAD) {
         if (m != 0UL)
             m--;
-        t = 0xFFFFU - 0xF830U + t + 1U;   /* counts since the pending rollover */
+        t = 0xFFFFU - TMR0_PRELOAD + t + 1U;   /* counts since the pending rollover */
     } else {
-        t = t - 0xF830U;
+        t = t - TMR0_PRELOAD;
     }
-    us = (unsigned long)t * 500UL / 1000UL;   /* 500 ns per count */
+    us = (unsigned long)t * 1000UL / (F_CPU / 4000UL);   /* counts -> microseconds */
     return m * 1000UL + us;
 }

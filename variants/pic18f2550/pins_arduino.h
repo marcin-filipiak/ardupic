@@ -18,6 +18,7 @@
  *  digital 22    = RC6 / TX
  *  digital 23    = RC7 / RX
  *  (RC4/RC5 = USB - tylko przy wlaczonym USB; normalnie cyfrowe)
+ *  (RA6/RA7 = OSC2/OSC1 - zajete przez krysztal HS-PLL w konfiguracji USB 48 MHz)
  */
 
 #define A0  0

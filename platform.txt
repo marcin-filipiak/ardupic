@@ -18,7 +18,7 @@ recipe.S.o.pattern="{compiler.path}arduino-cc" gas {build.mcu} -o "{object_file}
 recipe.ar.pattern="{compiler.path}arduino-cc" ar {build.mcu} "{archive_file_path}" "{object_file}"
 
 ## Recipe: combine objects into the firmware image
-recipe.c.combine.pattern="{compiler.path}arduino-cc" link {build.mcu} -o "{build.path}/{build.project_name}.hex" {object_files} "{archive_file_path}"
+recipe.c.combine.pattern="{compiler.path}arduino-cc" link {build.mcu} -o "{build.path}/{build.project_name}.hex" {object_files} "{archive_file_path}" "{build.lkr}"
 
 ## Recipe: report program size (Intel HEX -> bytes below CONFIG region)
 recipe.size.pattern="{compiler.path}arduino-cc" size {build.mcu} "{build.path}/{build.project_name}.hex"

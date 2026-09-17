@@ -36,6 +36,8 @@ void _isr(void) __interrupt(1)
         if (_ext_int2)
             _ext_int2();
     }
+    if (PIR5 & 0x03)            /* RXB0IF / RXB1IF - CAN */
+        can_irq();
 }
 
 unsigned long millis(void)

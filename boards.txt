@@ -22,11 +22,12 @@ pic18f2550.upload.maximum_data_size=2048
 pic18f2550.upload.tool=picprog-serial
 pic18f2550.upload.protocol=arduino
 
-pic18f2550.build.f_cpu=8000000L
+pic18f2550.build.f_cpu=48000000L
 pic18f2550.build.mcu=PIC18F2550
 pic18f2550.build.board=PIC18F2550
 pic18f2550.build.core=pic18f2550
 pic18f2550.build.variant=pic18f2550
+pic18f2550.build.lkr=18f2550usb_g.lkr
 
 pic18f4550.name=PIC18F4550 (40-pin)
 
@@ -35,11 +36,12 @@ pic18f4550.upload.maximum_data_size=2048
 pic18f4550.upload.tool=picprog-serial
 pic18f4550.upload.protocol=arduino
 
-pic18f4550.build.f_cpu=8000000L
+pic18f4550.build.f_cpu=48000000L
 pic18f4550.build.mcu=PIC18F4550
 pic18f4550.build.board=PIC18F4550
 pic18f4550.build.core=pic18f4550
 pic18f4550.build.variant=pic18f4550
+pic18f4550.build.lkr=18f4550usb_g.lkr
 
 pic16f877a.name=PIC16F877A (40-pin)
 

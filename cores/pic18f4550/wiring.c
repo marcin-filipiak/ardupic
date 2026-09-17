@@ -1,20 +1,22 @@
 #include <Arduino.h>
 
 /* Timer0 in 16-bit mode, no prescaler.
- * Fosc = 8 MHz -> T0CLK = 2 MHz = 500 ns / count.
- * Rollover period = 2000 counts = 1000 us.
- *
- * Preload: 0x10000 - 2000 = 0xF830  (TMR0H=0xF8, TMR0L=0x30)
+ * T0CLK = Fosc/4; rollover count per 1 ms = Fosc/4000.
+ *   48 MHz -> 12 MHz T0CLK -> 12000 counts (preload 0x10000-12000 = 0xD120)
+ *    8 MHz ->  2 MHz T0CLK ->  2000 counts (preload 0x10000-2000  = 0xF830)
  */
-#define TMR0_PRELOAD_H 0xF8
-#define TMR0_PRELOAD_L 0x30
+static void tmr0_set_1ms_preload(void)
+{
+    unsigned int pre = (unsigned int)(0x10000U - (unsigned int)(F_CPU / 4000UL));
+    TMR0H = (unsigned char)(pre >> 8);
+    TMR0L = (unsigned char)(pre & 0xFF);
+}
 
 void init(void)
 {
-    /* wewnetrzny oscylator 8 MHz (IRCF=110), czekaj na stabilizacje */
-    OSCCON = (1U << OSCCON_IRCF2) | (1U << OSCCON_IRCF1) | (1U << OSCCON_IDLEN);
-    while (!(OSCCON & (1U << OSCCON_IOFS)))
-        ;
+    /* Oscylator konfiguruje ustawienie bitu konfiguracyjnego FOSC
+     * (HS-PLL na plytkach USB). NIE przestawiamy OSCCON, bo przelaczyl
+     * by CPU na wewnetrzny oscylator. */
 
     /* wszystkie kanaly cyfrowe dopoki analogRead nie wlaczy danego */
     ADCON1 = ADCON1_PCFG_ALL_DIG;
@@ -33,8 +35,7 @@ void init(void)
 
     /* 16-bit Timer0, internal clock, no prescaler, stopped */
     T0CON = 0x00;
-    TMR0H = TMR0_PRELOAD_H;
-    TMR0L = TMR0_PRELOAD_L;
+    tmr0_set_1ms_preload();
     T0CON = (1U << T0CON_TMR0ON);      /* 16-bit, PS=1 */
 
     /* run it: interrupt at every 1 ms */
@@ -49,11 +50,11 @@ void delay(unsigned long ms)
         ;
 }
 
-/* busy-counter delay; calibrated for Fosc = 8 MHz (2 instr / us).
- * Each loop iteration is roughly 4-5 instructions -> factor 2/5.   */
+/* busy-counter delay; calibrated against Fosc (a loop iteration is
+ * roughly 5 instruction cycles, T0I = Fosc/4 cycles per us).        */
 void delayMicroseconds(unsigned int us)
 {
-    unsigned int i = (unsigned int)(((unsigned long)us * 2UL) / 5UL);
+    unsigned long i = ((unsigned long)us * (F_CPU / 4000000UL)) / 5UL;
     while (i-- != 0)
         ;
 }

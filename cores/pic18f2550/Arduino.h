@@ -96,6 +96,17 @@ void uart1_print_int(long v);
 int uart1_read(void);
 unsigned char uart1_available(void);
 
+/* ---- USB CDC (virtual serial, RC4=DM, RC5=DP) ---- */
+void usbcdc_begin(void);
+void usbcdc_poll(void);
+void usbcdc_write(unsigned char c);
+void usbcdc_print(const char *s);
+void usbcdc_println(const char *s);
+void usbcdc_print_ulong(unsigned long v);
+void usbcdc_print_int(long v);
+int usbcdc_read(void);
+int usbcdc_available(void);
+
 #include "pins_arduino.h"
 
 #endif
