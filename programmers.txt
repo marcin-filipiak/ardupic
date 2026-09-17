@@ -3,7 +3,7 @@
 picprog-serial.name=PICprog via serial/FTDI (6-pin ICSP)
 picprog-serial.protocol=picprog
 picprog-serial.program.tool=picprog-serial
-picprog-serial.program.pattern="{compiler.path}picprog-upload" -d {serial.port} -f "{build.path}/{build.project_name}.hex"
+picprog-serial.program.pattern="{compiler.path}picprog-upload" -d {build.mcu} -p {serial.port} -f "{build.path}/{build.project_name}.hex"
 
 stk500v1.name=STK500 compatible (AVR ISP on ICSP)
 stk500v1.protocol=stk500

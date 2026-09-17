@@ -1,18 +1,50 @@
 #!/bin/bash
-# picprog-upload - placeholder for the PIC programmer driver.
-# picprog (Debian 12) needs a patched device table to support the 25K80.
-# This driver will be replaced once picprog support lands; until then it
-# explains the situation instead of failing silently.
+# picprog-upload - sterownik wgrywania dla osadzonego picprog (JDM/FTDI).
+#
+# Tłumaczy argumenty arduino-cli na wywołanie picprog:
+#   -d, --device <mcu>   nazwa układu (np. PIC18F25K80)
+#   -p, --port   <port>  port szeregowy (np. /dev/ttyUSB0)
+#   -f, --file   <hex>   plik Intel HEX
+#
+# Domyślny programer to JDM; ustaw PICPROG_HW=k8048 aby wybrać K8048.
 set -u
-port=""; fw=""
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+PICPROG="$HERE/../toolchain/picprog/bin/picprog"
+
+device=""
+port=""
+hex=""
+hw="${PICPROG_HW:-jdm}"
+
 while [ $# -gt 0 ]; do
     case "$1" in
-        -d) port="${2:-}"; shift 2 ;;
-        -f) fw="${2:-}";    shift 2 ;;
-        *) shift ;;
+        -d|--device) device="${2:-}"; shift 2 ;;
+        -p|--port)   port="${2:-}";   shift 2 ;;
+        -f|--file)   hex="${2:-}";    shift 2 ;;
+        -v|-q)       shift ;;
+        *)           shift ;;
     esac
 done
-echo "picprog-upload: picprog programmer driver not yet available."
-echo "  port=($port)  firmware=$fw"
-echo "  Install Debian 'picprog' and patch the device table for PIC18F25K80."
-exit 1
+
+if [ ! -x "$PICPROG" ]; then
+    echo "picprog-upload: brak osadzonego picprog ($PICPROG)" >&2
+    echo "  Zbuduj go:  $HERE/../toolchain/picprog/build.sh" >&2
+    exit 1
+fi
+
+if [ -z "$hex" ]; then
+    echo "picprog-upload: nie podano pliku HEX (-f)" >&2
+    exit 1
+fi
+
+args=(--erase --burn)
+case "$hw" in
+    k8048) args+=(--k8048) ;;
+    *)     args+=(--jdm) ;;
+esac
+[ -n "$device" ] && args+=(-d "$device")
+[ -n "$port" ]   && args+=(-p "$port")
+args+=(-i "$hex")
+
+exec "$PICPROG" "${args[@]}"

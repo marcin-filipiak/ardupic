@@ -12,12 +12,12 @@
         {
           "name": "ardupic (SDCC/gputils)",
           "architecture": "ardupic",
-          "version": "0.2.0",
+          "version": "0.3.0",
           "category": "Pic18",
-          "url": "https://raw.githubusercontent.com/marcin-filipiak/ardupic/main/assets/ardupic-platform-0.2.0.zip",
-          "archiveFileName": "ardupic-platform-0.2.0.zip",
-          "checksum": "SHA-256:fc19759b1f5ebcde0335c8a373066ceeda66feca7686ccad46daf6587422db47",
-          "size": 10411714,
+          "url": "https://raw.githubusercontent.com/marcin-filipiak/ardupic/main/assets/ardupic-platform-0.3.0.zip",
+          "archiveFileName": "ardupic-platform-0.3.0.zip",
+          "checksum": "SHA-256:a68c51966ac3ff93e4c0eb118e72c70244bf9bd1e00eb2d6accdbd80115a50fc",
+          "size": 10538336,
           "toolsDependencies": []
         }
       ],

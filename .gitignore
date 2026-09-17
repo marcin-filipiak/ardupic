@@ -12,6 +12,12 @@ toolchain/sdcc/
 toolchain/gputils/
 toolchain/header/
 
+# picprog: osadzone źródło jest w repo, artefakty budowania już nie
+toolchain/picprog/bin/
+toolchain/picprog/src/*.o
+toolchain/picprog/src/picprog
+toolchain/picprog/src/testport
+
 # artefakty assemblera/łącznika
 *.o
 *.lst
