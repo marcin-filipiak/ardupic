@@ -18,7 +18,7 @@ static uint8_t analog_channel_for_pin(uint8_t pin)
 /* PIC16F877A has a 10-bit ADC, 8 channels.
  * ADCS=010 -> TAD = Fosc/32 = 2 us @ 4 MHz (min 1.1 us ok).
  * Vref+ = VDD, Vref- = VSS. Returns 0 .. 1023.
- * PCFG: 0000 = wszystkie analogowe, 0111 = wszystkie cyfrowe.     */
+ * PCFG: 0000 = all analog, 0111 = all digital.                    */
 
 int analogRead(uint8_t pin)
 {
@@ -31,7 +31,7 @@ int analogRead(uint8_t pin)
     /* ADCON1: ADFM=1 (right justified), ADCS2=0, PCFG=0000 (all analog) */
     ADCON1 = _ADFM;
 
-    /* ADCON0: ADON, ADCS=010 (ADCS0), CHS = kanal */
+    /* ADCON0: ADON, ADCS=010 (ADCS0), CHS = channel */
     ADCON0 = _ADON | _ADCS0 | ((uint8_t)((ch & 7U) << 3));
 
     /* acquisition delay (~20 us for safety) */
@@ -48,7 +48,7 @@ int analogRead(uint8_t pin)
     unsigned int r = ((unsigned int)ADRESH << 2) |
                      ((unsigned int)(ADRESL & 0xC0U) >> 6);
 
-    /* przywroc piny jako cyfrowe (PCFG=0111, ADFM=1) */
+    /* restore pins as digital (PCFG=0111, ADFM=1) */
     ADCON1 = _ADFM | _PCFG0 | _PCFG1 | _PCFG2;
     return (int)r;
 }

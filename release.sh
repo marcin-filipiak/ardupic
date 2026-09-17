@@ -1,9 +1,9 @@
 #!/bin/bash
-# release.sh - buduje paczkę platformy ardupic (zip z osadzonym toolchainem),
-# liczy SHA-256 i generuje indeks dla Arduino Board Manager:
+# release.sh - builds the ardupic platform package (a zip with the bundled
+# toolchain), computes the SHA-256 and generates the Arduino Board Manager index:
 #   package_ardupic_index.json
 #
-# Użycie: ./release.sh [wersja]   (domyślnie wersja z platform.txt)
+# Usage: ./release.sh [version]   (defaults to the version in platform.txt)
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -21,7 +21,7 @@ ZIP="$HERE/assets/$ZIP_NAME"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
-echo "==> Budowanie paczki $ZIP_NAME"
+echo "==> Building package $ZIP_NAME"
 
 mkdir -p "$HERE/assets" "$STAGE/root"
 rm -f "$ZIP"
@@ -71,7 +71,7 @@ json.dump({"packages": [pkg]}, sys.stdout, indent=2, ensure_ascii=False)
 sys.stdout.write("\n")
 PYEOF
 
-echo "OK: assets/$ZIP_NAME  ($SIZE bajtów, SHA-256: $SHA)"
-echo "Indeks: package_ardupic_index.json"
-echo "Adres URL dla Arduino IDE/CLI:"
+echo "OK: assets/$ZIP_NAME  ($SIZE bytes, SHA-256: $SHA)"
+echo "Index: package_ardupic_index.json"
+echo "URL for Arduino IDE/CLI:"
 echo "  https://raw.githubusercontent.com/$OWNER/$REPO/$BRANCH/package_ardupic_index.json"

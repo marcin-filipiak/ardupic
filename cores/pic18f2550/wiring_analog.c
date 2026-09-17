@@ -50,7 +50,7 @@ int analogRead(uint8_t pin)
     /* select channel & enable ADC */
     ADCON0 = ((uint8_t)(ch << 2)) | (1U << ADCON0_ADON);
 
-    /* wlacz tylko ten kanal (reszta cyfrowa) */
+    /* enable just this channel (the rest stay digital) */
     ADCON1 = pcfg_for_channel(ch);
 
     /* acquisition delay (minimum 12 µs @ 5 V, ~20 µs for safety) */
@@ -67,7 +67,7 @@ int analogRead(uint8_t pin)
     int r = (int)(((unsigned int)ADRESH << 2) |
                   ((unsigned int)(ADRESL & 0xC0U) >> 6));
 
-    /* przywroc wszystkie piny jako cyfrowe */
+    /* restore all pins as digital */
     ADCON1 = ADCON1_PCFG_ALL_DIG;
     return r;
 }

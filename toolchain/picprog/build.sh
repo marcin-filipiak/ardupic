@@ -1,11 +1,11 @@
 #!/bin/bash
-# build.sh - kompiluje osadzoną (vendored) kopię picprog 1.9.1.
+# build.sh - compiles the vendored copy of picprog 1.9.1.
 #
-# Kopia w src/ zawiera lokalny patch: dodany wpis PIC18F25K80 w tablicy
-# urządzeń (hexfile.cc, device_id 0x6180, write_size 64). Wynikowy plik
-# wykonywalny trafia do bin/picprog i jest dołączany do paczki platformy.
+# The copy in src/ carries a local patch: a PIC18F25K80 entry in the device
+# table (hexfile.cc, device_id 0x6180, write_size 64). The resulting executable
+# is placed in bin/picprog and bundled with the platform package.
 #
-# Użycie: ./build.sh
+# Usage: ./build.sh
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"

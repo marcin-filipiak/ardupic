@@ -11,7 +11,7 @@
 
 void init(void)
 {
-    /* ADCON1: ADFM=1, PCFG=0111 -> wszystkie kanaly cyfrowe */
+    /* ADCON1: ADFM=1, PCFG=0111 -> all channels digital */
     ADCON1 = _ADFM | _PCFG0 | _PCFG1 | _PCFG2;
 
     /* all pins inputs, output states low */

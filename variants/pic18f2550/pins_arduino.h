@@ -17,8 +17,8 @@
  *  digital 18    = RC2 / CCP1 (PWM)
  *  digital 22    = RC6 / TX
  *  digital 23    = RC7 / RX
- *  (RC4/RC5 = USB - tylko przy wlaczonym USB; normalnie cyfrowe)
- *  (RA6/RA7 = OSC2/OSC1 - zajete przez krysztal HS-PLL w konfiguracji USB 48 MHz)
+ *  (RC4/RC5 = USB - only when USB is enabled; digital otherwise)
+ *  (RA6/RA7 = OSC2/OSC1 - used by the HS-PLL crystal in the 48 MHz USB configuration)
  */
 
 #define A0  0

@@ -1,24 +1,24 @@
-# artefakty lokalne / testowe
+# local/test artifacts
 _build/
 _ardhome/
 _arddata/
 frame.dummy
 
-# narzędzia testowe
+# test tooling
 tools/arduino-cli
 
-# toolchain binarny (generowany, duży) — nie trafia do repo źródłowego
+# binary toolchain (generated, large) — not committed to the source repo
 toolchain/sdcc/
 toolchain/gputils/
 toolchain/header/
 
-# picprog: osadzone źródło jest w repo, artefakty budowania już nie
+# picprog: the vendored source is committed, build artifacts are not
 toolchain/picprog/bin/
 toolchain/picprog/src/*.o
 toolchain/picprog/src/picprog
 toolchain/picprog/src/testport
 
-# artefakty assemblera/łącznika
+# assembler/linker artifacts
 *.o
 *.lst
 *.cod

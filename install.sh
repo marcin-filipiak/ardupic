@@ -1,8 +1,8 @@
 #!/bin/bash
-# install.sh - instaluje platformę ardupic (PIC18F25K80/2550/4550, PIC16F877A)
-# w katalogu hardware Arduino.
-# Użycie: ./install.sh [katalog_użytkownika_arduino]
-# Domyślnie: ~/Arduino  (arduino-cli/IDE 2.x skanują tam hardware/)
+# install.sh - installs the ardupic platform (PIC18F25K80/2550/4550, PIC16F877A)
+# into the Arduino hardware directory.
+# Usage: ./install.sh [arduino_user_dir]
+# Default: ~/Arduino  (arduino-cli/IDE 2.x scan hardware/ there)
 set -u
 cd "$(dirname "$0")"
 
@@ -18,5 +18,5 @@ for item in boards.txt platform.txt programmers.txt cores variants tools toolcha
     cp -r "$item" "$DEST/"
 done
 
-echo "Zainstalowano platformę w: $DEST"
-echo "Weryfikacja:  arduino-cli board listall  | grep -i ardupic"
+echo "Installed the platform at: $DEST"
+echo "Verify with:  arduino-cli board listall  | grep -i ardupic"

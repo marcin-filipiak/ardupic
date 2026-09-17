@@ -1,4 +1,4 @@
-/* pic18f25k80.h - deklaracje SFR dla SDCC (generowane, adresy z gputils p18f25k80.inc) */
+/* pic18f25k80.h - SDCC SFR declarations (generated, addresses from gputils p18f25k80.inc) */
 #ifndef _PIC18F25K80_H
 #define _PIC18F25K80_H
 

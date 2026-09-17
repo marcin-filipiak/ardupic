@@ -14,7 +14,7 @@
  *  digital 22    = RC6 / TX
  *  digital 23    = RC7 / RX
  *  digital 32..34= RE0..RE2 / AN5..AN7 -> A5..A7
- *  (RA6/RA7 to piny krysztalu OSC1/OSC2 - nieuzywalne)
+ *  (RA6/RA7 are the crystal pins OSC1/OSC2 - unusable)
  */
 
 #define A0  0

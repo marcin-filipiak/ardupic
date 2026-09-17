@@ -18,8 +18,8 @@
  *  digital 22    = RC6 / TX
  *  digital 23    = RC7 / RX
  *  digital 32..34= RE0..RE2 / AN5..AN7 -> A5..A7
- *  (RA7 nie istnieje; RC4/RC5 = USB)
- *  (RA6/RA7 = OSC2/OSC1 - zajete przez krysztal HS-PLL w konfiguracji USB 48 MHz)
+ *  (RA7 does not exist; RC4/RC5 = USB)
+ *  (RA6/RA7 = OSC2/OSC1 - used by the HS-PLL crystal in the 48 MHz USB configuration)
  */
 
 #define A0  0

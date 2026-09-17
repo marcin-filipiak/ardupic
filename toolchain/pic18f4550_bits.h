@@ -1,6 +1,6 @@
 /*
- * pic18f4550_bits.h - bit maski rejestrow PIC18F4550 dla core Arduino.
- * Wartosci zgodne z p18f4550.inc (gputils) / datasheet DS39632E.
+ * pic18f4550_bits.h - register bit masks for the PIC18F4550 Arduino core.
+ * Values match p18f4550.inc (gputils) / datasheet DS39632E.
  */
 #ifndef _PIC18F4550_BITS_H
 #define _PIC18F4550_BITS_H
@@ -65,7 +65,7 @@
 #define T2CON_T2CKPS1 1
 #define T2CON_TMR2ON  2
 
-/* ---- CCP1CON (standardowy CCP1; ECCP1CON = ten rejestr w trybie PWM) ---- */
+/* ---- CCP1CON (standard CCP1; ECCP1CON = this register in PWM mode) ---- */
 #define CCP1CON_CCP1M0 0
 #define CCP1CON_CCP1M1 1
 #define CCP1CON_CCP1M2 2

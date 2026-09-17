@@ -26,7 +26,7 @@ void pinMode(uint8_t pin, uint8_t mode)
 {
     if (pin >= NUM_DIGITAL_PINS)
         return;
-    if (pin == 7)                /* RA7 nie istnieje w PIC18F4550 */
+    if (pin == 7)                /* RA7 does not exist on the PIC18F4550 */
         return;
     uint8_t port = pin >> 3;
     uint8_t bit  = pin & 7;

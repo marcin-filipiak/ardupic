@@ -1,10 +1,10 @@
 #include <Arduino.h>
 
-/* Konfiguracja PIC18F4550:
-   HS-PLL z 20 MHz krysztalem -> PLL x24 = 96 MHz, CPU = 96/2 = 48 MHz,
-   USB = 96/2 = 48 MHz (pelna predkosc, wymagany krysztal 20 MHz),
-   WDT off, XINST off, PORTB analog domyslnie wylaczony,
-   wewn. regulator USB (VUSB) wlaczony */
+/* PIC18F4550 configuration:
+   HS-PLL with a 20 MHz crystal -> PLL x24 = 96 MHz, CPU = 96/2 = 48 MHz,
+   USB = 96/2 = 48 MHz (full speed, 20 MHz crystal required),
+   WDT off, XINST off, PORTB analog disabled by default,
+   internal USB regulator (VUSB) enabled */
 #pragma config PLLDIV=5, CPUDIV=OSC1_PLL2, USBDIV=2
 #pragma config FOSC=HSPLL_HS, FCMEN=OFF, IESO=OFF
 #pragma config PWRT=ON, BOR=OFF, BORV=0, VREGEN=ON

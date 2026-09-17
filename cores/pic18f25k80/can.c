@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "can.h"
 
-/* ---- masek bitowe (SDCC nie generuje nazw bitowych dla CAN) -------- */
+/* ---- bit masks (SDCC does not generate bit names for CAN) ---------- */
 #define CANSTAT_OPMODE_MASK  0xE0
 #define CANCON_REQOP_CONFIG  0x80
 #define CANCON_REQOP_NORMAL  0x00
@@ -27,7 +27,7 @@
 #define DLC_RTR         0x40
 #define SIDL_EXIDE      0x08
 
-/* ---- tablica predkosci (@ F_CPU = 16 MHz, bit 16 TQ) ---------------- */
+/* ---- baud-rate table (@ F_CPU = 16 MHz, 16 TQ per bit) -------------- */
 typedef struct {
     unsigned long baud;
     unsigned char brg1;
@@ -86,7 +86,7 @@ static void can_tx_load(unsigned long id, uint8_t extended,
     }
 }
 
-/* ---- obsluga przerwania RX (wolana z isr.c) ------------------------ */
+/* ---- RX interrupt handler (called from isr.c) ---------------------- */
 void can_irq(void)
 {
     unsigned char fl = PIR5 & 0x03;
@@ -95,9 +95,9 @@ void can_irq(void)
 
     if (fl == 0)
         return;
-    PIR5 = (unsigned char)(PIR5 & 0xFC);   /* skasuj RXB0IF/RXB1IF */
+    PIR5 = (unsigned char)(PIR5 & 0xFC);   /* clear RXB0IF/RXB1IF */
 
-    /* RXB0 (najstarszy, wyzszy priorytet) */
+    /* RXB0 (older, higher priority) */
     if (fl & PIR5_RXB0IF) {
         sidh = RXB0SIDH;
         sidl = RXB0SIDL;
@@ -186,27 +186,27 @@ uint8_t can_begin(unsigned long baud)
             break;
     }
     if (i == (uint8_t)(sizeof(can_timing) / sizeof(can_timing[0])))
-        return 0;                       /* nieznana predkosc */
+        return 0;                       /* unknown baud rate */
 
-    /* wejdz w tryb konfiguracji */
+    /* enter configuration mode */
     CANCON = CANCON_REQOP_CONFIG;
     while ((CANSTAT & CANSTAT_OPMODE_MASK) != CANCON_REQOP_CONFIG)
         ;
 
-    ECANCON &= (unsigned char)~ECANCON_MDSEL_MASK;  /* tryb Legacy */
+    ECANCON &= (unsigned char)~ECANCON_MDSEL_MASK;  /* Legacy mode */
 
     BRGCON1 = can_timing[i].brg1;
     BRGCON2 = can_timing[i].brg2;
     BRGCON3 = can_timing[i].brg3;
 
-    /* odbieraj wszystko (filtry i maski pomijane) */
+    /* receive everything (filters and masks bypassed) */
     RXB0CON = RXBnCON_RXM_ALL;
     RXB1CON = RXBnCON_RXM_ALL;
 
-    PIR5 = 0;                           /* wyczysc flagi CAN */
+    PIR5 = 0;                           /* clear CAN flags */
     PIE5 = (unsigned char)(PIE5_RXB0IE | PIE5_RXB1IE);
 
-    /* wroc do trybu normalnego */
+    /* return to normal mode */
     CANCON = CANCON_REQOP_NORMAL;
     while ((CANSTAT & CANSTAT_OPMODE_MASK) != CANCON_REQOP_NORMAL)
         ;
@@ -222,7 +222,7 @@ static uint8_t can_tx(unsigned long id, uint8_t extended,
     if (len > CAN_MAX_DATA)
         len = CAN_MAX_DATA;
 
-    /* poczekaj az poprzednia ramka z TXB2 opusci bufor */
+    /* wait until the previous frame leaves the TXB2 buffer */
     guard = 0;
     while (TXB2CON & TXBnCON_TXREQ) {
         if (++guard == 0U)
@@ -231,7 +231,7 @@ static uint8_t can_tx(unsigned long id, uint8_t extended,
 
     can_tx_load(id, extended, data, len, rtr);
 
-    /* zadaj transmisje i czekaj na zakonczenie */
+    /* request transmission and wait for completion */
     TXB2CON = TXBnCON_TXREQ;
     guard = 0;
     while (TXB2CON & TXBnCON_TXREQ) {

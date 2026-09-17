@@ -1,8 +1,8 @@
 #!/bin/bash
 # arduino-cc - SDCC/gputils shim used by platform.txt of the ardupic core.
 #
-# Wywołanie: arduino-cc <mode> <DEVICE> <args...>
-#   DEVICE  - np. PIC18F25K80 | PIC18F2550 | PIC18F4550 | PIC16F877A
+# Invocation: arduino-cc <mode> <DEVICE> <args...>
+#   DEVICE  - e.g. PIC18F25K80 | PIC18F2550 | PIC18F4550 | PIC16F877A
 #
 # Modes:
 #   compile     <DEVICE> <flags> -o out.o src.c|src.cpp  : C/C -> sdcc -S -> gpasm -c
@@ -33,9 +33,9 @@ else
     DEVICE="PIC18F25K80"
 fi
 
-# --- wyprowadź architekturę i nazwy procesora ---
-#   SPROC  - dla SDCC : pic18f2550 / pic16f877a
-#   GEPROC - dla gp*  : 18f2550 / 16f877a          (bez przedrostka "pic")
+# --- derive the architecture and processor names ---
+#   SPROC  - for SDCC : pic18f2550 / pic16f877a
+#   GEPROC - for gp*  : 18f2550 / 16f877a          (without the "pic" prefix)
 CASE_ARG="$(echo "$DEVICE" | tr '[:upper:]' '[:lower:]')"
 case "$DEVICE" in
     PIC16F*) ARCH="pic14"; SPROC="$CASE_ARG"; GEPROC="${CASE_ARG#pic}" ;;
@@ -198,11 +198,11 @@ case "$mode" in
 
   size)
     hex="${1:-}"
-    [ -f "$hex" ] || { echo "arduino-cc size: brak pliku HEX" >&2; exit 1; }
+    [ -f "$hex" ] || { echo "arduino-cc size: missing HEX file" >&2; exit 1; }
     python3 - "$hex" "$ARCH" <<'PYEOF'
 import sys
 hex_file, arch = sys.argv[1], sys.argv[2]
-limit = 0x100000 if arch == "pic16" else 0x2000   # powyzej: region config
+limit = 0x100000 if arch == "pic16" else 0x2000   # above: config region
 base = 0
 end = 0
 for raw in open(hex_file):

@@ -1,6 +1,6 @@
 /*
- * pic18f25k80_bits.h - bit masek rejestrów PIC18F25K80 dla core Arduino.
- * Wartości zgodne z p18f25k80.inc (gputils) / datasheet DS39977.
+ * pic18f25k80_bits.h - register bit masks for the PIC18F25K80 Arduino core.
+ * Values match p18f25k80.inc (gputils) / datasheet DS39977.
  */
 #ifndef _PIC18F25K80_BITS_H
 #define _PIC18F25K80_BITS_H

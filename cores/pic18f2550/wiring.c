@@ -14,11 +14,11 @@ static void tmr0_set_1ms_preload(void)
 
 void init(void)
 {
-    /* Oscylator konfiguruje ustawienie bitu konfiguracyjnego FOSC
-     * (HS-PLL na plytkach USB). NIE przestawiamy OSCCON, bo przelaczyl
-     * by CPU na wewnetrzny oscylator. */
+    /* The oscillator is selected by the FOSC configuration bit (HS-PLL on
+     * the USB boards). We do NOT touch OSCCON, as that would switch the CPU
+     * to the internal oscillator. */
 
-    /* wszystkie kanaly cyfrowe dopoki analogRead nie wlaczy danego */
+    /* all channels digital until analogRead enables a given one */
     ADCON1 = ADCON1_PCFG_ALL_DIG;
 
     /* output latches low, all pins inputs */

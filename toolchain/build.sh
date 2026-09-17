@@ -1,5 +1,5 @@
 #!/bin/bash
-# Buduje obraz HEX PIC18F25K80 z pliku C przy użyciu SDCC + gputils.
+# build.sh - builds a HEX image for PIC18F25K80 from a C file using SDCC + gputils.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -12,13 +12,13 @@ DEV_LIB="${DEV_LIB:-$HERE/lib}"
 SDCC_INC="${SDCC_INC:-$HERE/sdcc/share/sdcc/include/pic16}"
 GPUTILS_INC_DIR="${GPUTILS_INC_DIR:-$HERE/header}"
 
-SRC="${1:?usage: $0 plik.c}"
+SRC="${1:?usage: $0 file.c}"
 BASE="${SRC%.c}"
 
 "$SDCC_BIN/sdcc" -S -mpic16 -p18f25k80 -I"$SDCC_INC" -I"$HERE" --std-c99 --no-warn-non-free -o "$BASE.asm" "$SRC"
 "$GPUTILS_BIN/gpasm" -c -I"$DEV_LIB" -o "$BASE.o" "$BASE.asm"
 
-# sdcc 4.5.0 quirk: stara nazwa eeprom_gptr* -> eeprom8_gptr*
+# sdcc 4.5.0 quirk: old eeprom_gptr* name -> eeprom8_gptr*
 SHIM_O="$DEV_LIB/gptr_shim.o"
 if [ ! -f "$SHIM_O" ]; then
   "$GPUTILS_BIN/gpasm" -p18f25k80 -c -I "$GPUTILS_INC_DIR" -o "$SHIM_O" "$HERE/lib/gptr_shim.S"

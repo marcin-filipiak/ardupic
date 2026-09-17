@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Generuje <device>.h (deklaracje SFR dla SDCC) z pliku .inc gputils.
+"""Generates <device>.h (SDCC SFR declarations) from a gputils .inc file.
 
-Uzycie:
+Usage:
     gen_headers.py <inc> <out.h> <DEVICE>
 
-Parsuje blok ";----- Register Files" z pliku .inc Mikrochipa i wypisuje
-deklaracje SFR w stylu projektu:
+Parses the ";----- Register Files" block of a Microchip .inc file and emits
+SFR declarations in this project's style:
     extern __at (0x0F62) __sfr NAME;
-Adresy narastajaco, aliasy tego samego adresu wypisane po kolei.
+Addresses in ascending order; aliases of the same address are listed together.
 """
 import re, sys
 
@@ -21,7 +21,7 @@ for m in re.finditer(r"^\s*([A-Z][A-Z0-9_]*)\s+EQU\s+H'0([0-9A-F]{2,3})'\s*$", b
     by_addr.setdefault(a, []).append(m.group(1))
 
 lines = [
-    "/* %s.h - deklaracje SFR dla SDCC (generowane, adresy z gputils %s.inc) */" % (device, device),
+    "/* %s.h - SDCC SFR declarations (generated, addresses from gputils %s.inc) */" % (device, device),
     "#ifndef _%s_H" % device.upper(),
     "#define _%s_H" % device.upper(),
     "",
@@ -32,4 +32,4 @@ for a in sorted(by_addr):
 lines += ["", "#endif"]
 
 open(out_path, "w").write("\n".join(lines) + "\n")
-print("OK: %d adresow SFR -> %s" % (len(by_addr), out_path))
+print("OK: %d SFR addresses -> %s" % (len(by_addr), out_path))

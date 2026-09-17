@@ -1,12 +1,12 @@
 #!/bin/bash
-# Regeneruje libdev<urzadzenie>.lib — bibliotekę symboli SFR dla SDCC/gplink.
-# Użycie: gen_sfr_lib.sh [device]  (domyslnie 18f25k80)
+# Regenerates libdev<device>.lib - the SFR symbol library for SDCC/gplink.
+# Usage: gen_sfr_lib.sh [device]  (default 18f25k80)
 #
-# SDCC generuje odwołania do SFR jako symboli zewnętrznych (np. _LATB).
-# gputils 1.4 nie pozwala zdefiniować absolutnego symbolu globalnego przez
-# "EQU" w trybie relokowalnym (Error[156]). Rozwiązanie: jedna absolutna
-# sekcja UDATA na adres rejestru (pokryte przez PROTECTED w .lkr),
-# z globalnymi labelami _Nazwa i RES 1.
+# SDCC emits references to SFRs as external symbols (e.g. _LATB).
+# gputils 1.4 does not allow defining an absolute global symbol via "EQU"
+# in relocatable mode (Error[156]). Solution: one absolute UDATA section per
+# register address (covered by PROTECTED in the .lkr), with global _Name labels
+# and RES 1.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"

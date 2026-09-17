@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 /* USART: TX = RC6 (Arduino pin 22), RX = RC7 (Arduino pin 23).
- * PIC16F877A ma 8-bitowy generator baud rate (SPBRG), BRGH=1:
+ * The PIC16F877A has an 8-bit baud-rate generator (SPBRG), BRGH=1:
  *   SPBRG = Fosc/(16*baud) - 1.
  * Supported reliably @ 4 MHz: 4800, 9600, 19200.
  */

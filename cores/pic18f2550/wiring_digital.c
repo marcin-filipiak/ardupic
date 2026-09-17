@@ -26,7 +26,7 @@ void pinMode(uint8_t pin, uint8_t mode)
     uint8_t port = pin >> 3;
     uint8_t bit  = pin & 7;
 
-    /* analog Read robi wlasny PCFG per czytanie -> nic tu nie trzymamy */
+    /* analogRead applies its own PCFG per read -> keep nothing here */
     if (mode == OUTPUT) {
         switch (port) {
         case 0: TRISA &= ~(1U << bit); LATA &= ~(1U << bit); break;

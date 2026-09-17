@@ -1,6 +1,6 @@
 /*
- * pic18f2550_bits.h - bit maski rejestrow PIC18F2550 dla core Arduino.
- * Wartosci zgodne z p18f2550.inc (gputils) / datasheet DS39632E.
+ * pic18f2550_bits.h - register bit masks for the PIC18F2550 Arduino core.
+ * Values match p18f2550.inc (gputils) / datasheet DS39632E.
  */
 #ifndef _PIC18F2550_BITS_H
 #define _PIC18F2550_BITS_H

@@ -20,13 +20,13 @@ void pinMode(uint8_t pin, uint8_t mode)
 {
     if (pin >= NUM_DIGITAL_PINS)
         return;
-    if (pin == 6 || pin == 7)        /* RA6/RA7 = piny krysztalu (OSC2/OSC1) */
+    if (pin == 6 || pin == 7)        /* RA6/RA7 = crystal pins (OSC2/OSC1) */
         return;
     uint8_t port = pin >> 3;
     uint8_t bit  = pin & 7;
 
     if (mode == OUTPUT) {
-        /* najpierw wyjcie, potem kierunek - uniknij stanu wysokiej Z z impulsem */
+        /* output level first, then direction - avoid a high-Z glitch */
         switch (port) {
         case 0: PORTA &= ~(1U << bit); TRISA &= ~(1U << bit); break;
         case 1: PORTB &= ~(1U << bit); TRISB &= ~(1U << bit); break;
@@ -41,7 +41,7 @@ void pinMode(uint8_t pin, uint8_t mode)
             TRISB |= (1U << bit);
             if (mode == INPUT_PULLUP) {
                 OPTION_REG &= ~0x80U;            /* PORTB pull-up enable */
-                PORTB |= (1U << bit);            /* pull-up na tym pinie */
+                PORTB |= (1U << bit);            /* pull-up on this pin */
             }
             break;
         case 2: TRISC |= (1U << bit); break;
@@ -51,9 +51,9 @@ void pinMode(uint8_t pin, uint8_t mode)
     }
 }
 
-/* PIC16F877A nie ma rejestrow LAT - piszemy bezposrednio do PORT.
- * UWAGA: odczyt-zapis (RMW) na pinach PORTB moze zaklocic ustawienie
- * innych pinow wejsciowych tego portu (klasyczny problem PIC16). */
+/* The PIC16F877A has no LAT registers - write directly to PORT.
+ * NOTE: read-modify-write (RMW) on PORTB pins can disturb the state of
+ * other input pins on that port (the classic PIC16 issue). */
 void digitalWrite(uint8_t pin, uint8_t val)
 {
     if (pin >= NUM_DIGITAL_PINS)

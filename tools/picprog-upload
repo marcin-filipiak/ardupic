@@ -1,12 +1,12 @@
 #!/bin/bash
-# picprog-upload - sterownik wgrywania dla osadzonego picprog (JDM/FTDI).
+# picprog-upload - upload driver for the bundled picprog (JDM/FTDI).
 #
-# Tłumaczy argumenty arduino-cli na wywołanie picprog:
-#   -d, --device <mcu>   nazwa układu (np. PIC18F25K80)
-#   -p, --port   <port>  port szeregowy (np. /dev/ttyUSB0)
-#   -f, --file   <hex>   plik Intel HEX
+# Translates arduino-cli arguments into a picprog invocation:
+#   -d, --device <mcu>   device name (e.g. PIC18F25K80)
+#   -p, --port   <port>  serial port (e.g. /dev/ttyUSB0)
+#   -f, --file   <hex>   Intel HEX file
 #
-# Domyślny programer to JDM; ustaw PICPROG_HW=k8048 aby wybrać K8048.
+# The default programmer is JDM; set PICPROG_HW=k8048 to select K8048.
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -28,13 +28,13 @@ while [ $# -gt 0 ]; do
 done
 
 if [ ! -x "$PICPROG" ]; then
-    echo "picprog-upload: brak osadzonego picprog ($PICPROG)" >&2
-    echo "  Zbuduj go:  $HERE/../toolchain/picprog/build.sh" >&2
+    echo "picprog-upload: bundled picprog not found ($PICPROG)" >&2
+    echo "  Build it with:  $HERE/../toolchain/picprog/build.sh" >&2
     exit 1
 fi
 
 if [ -z "$hex" ]; then
-    echo "picprog-upload: nie podano pliku HEX (-f)" >&2
+    echo "picprog-upload: no HEX file given (-f)" >&2
     exit 1
 fi
 
