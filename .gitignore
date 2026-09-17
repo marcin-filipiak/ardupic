@@ -4,6 +4,10 @@ _ardhome/
 _arddata/
 frame.dummy
 
+# python bytecode
+__pycache__/
+*.pyc
+
 # test tooling
 tools/arduino-cli
 
