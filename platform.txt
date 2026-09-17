@@ -1,5 +1,5 @@
-name=PIC18F25K80 (SDCC)
-version=0.1.0
+name=ardupic (SDCC / gputils)
+version=0.2.0
 
 ## Compiler (SDCC wrapper)
 compiler.path={runtime.platform.path}/tools/
@@ -10,22 +10,22 @@ compiler.ldflags=
 compiler.objcopy.eep.flags=
 
 ## Recipe: compile object
-recipe.c.o.pattern="{compiler.path}arduino-cc" compile {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
-recipe.cpp.o.pattern="{compiler.path}arduino-cc" compile {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
-recipe.S.o.pattern="{compiler.path}arduino-cc" gas -o "{object_file}" "{source_file}"
+recipe.c.o.pattern="{compiler.path}arduino-cc" compile {build.mcu} {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
+recipe.cpp.o.pattern="{compiler.path}arduino-cc" compile {build.mcu} {compiler.c.flags} {compiler.warning_flags} {compiler.c.extra_flags} -DF_CPU={build.f_cpu} -I{build.core.path} -I{build.variant.path} -o "{object_file}" "{source_file}"
+recipe.S.o.pattern="{compiler.path}arduino-cc" gas {build.mcu} -o "{object_file}" "{source_file}"
 
 ## Recipe: archive core objects
-recipe.ar.pattern="{compiler.path}arduino-cc" ar "{archive_file_path}" "{object_file}"
+recipe.ar.pattern="{compiler.path}arduino-cc" ar {build.mcu} "{archive_file_path}" "{object_file}"
 
 ## Recipe: combine objects into the firmware image
-recipe.c.combine.pattern="{compiler.path}arduino-cc" link -o "{build.path}/{build.project_name}.hex" {object_files} "{archive_file_path}"
+recipe.c.combine.pattern="{compiler.path}arduino-cc" link {build.mcu} -o "{build.path}/{build.project_name}.hex" {object_files} "{archive_file_path}"
 
 ## Recipe: report program size (Intel HEX -> bytes below CONFIG region)
-recipe.size.pattern="{compiler.path}arduino-cc" size "{build.path}/{build.project_name}.hex"
+recipe.size.pattern="{compiler.path}arduino-cc" size {build.mcu} "{build.path}/{build.project_name}.hex"
 recipe.size.regex=^SKETCH: ([0-9]+) bytes$
 
 ## Recipe: preprocessor macro pass (no-op for SDCC)
-recipe.c.preproc.macros="{compiler.path}arduino-cc" preproc "{source_file}"
+recipe.c.preproc.macros="{compiler.path}arduino-cc" preproc {build.mcu} "{source_file}"
 
 ## Upload defaults
 tools.picprog-serial.path={runtime.platform.path}/tools/

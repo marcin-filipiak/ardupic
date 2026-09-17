@@ -1,0 +1,27 @@
+{
+  "packages": [
+    {
+      "name": "marcinfilipiak",
+      "maintainer": "Marcin Filipiak",
+      "websiteURL": "https://github.com/marcin-filipiak/ardupic",
+      "email": "marcin-filipiak@users.noreply.github.com",
+      "help": {
+        "online": "https://github.com/marcin-filipiak/ardupic"
+      },
+      "platforms": [
+        {
+          "name": "ardupic (SDCC/gputils)",
+          "architecture": "ardupic",
+          "version": "0.2.0",
+          "category": "Pic18",
+          "url": "https://raw.githubusercontent.com/marcin-filipiak/ardupic/main/assets/ardupic-platform-0.2.0.zip",
+          "archiveFileName": "ardupic-platform-0.2.0.zip",
+          "checksum": "SHA-256:fc19759b1f5ebcde0335c8a373066ceeda66feca7686ccad46daf6587422db47",
+          "size": 10411714,
+          "toolsDependencies": []
+        }
+      ],
+      "tools": []
+    }
+  ]
+}
